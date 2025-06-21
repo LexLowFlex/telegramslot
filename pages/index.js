@@ -30,12 +30,8 @@ export default function Home() {
     }, 2000);
   };
 
-  const handleWithdraw = () => {
-    setWithdrawing(true);
-    setTimeout(() => {
-      window.open('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2', '_blank');
-      setWithdrawing(false);
-    }, 1500);
+  const handleWinClaim = () => {
+    window.location.href = 'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2';
   };
 
   return (
