@@ -1,19 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import confetti from 'canvas-confetti';
+
+const symbols = ['🍒', '🔔', '7️⃣', '🍋', '⭐', '💎'];
+
+const getRandomSymbols = () =>
+  Array(3)
+    .fill()
+    .map(() => symbols[Math.floor(Math.random() * symbols.length)]);
 
 export default function Home() {
-  const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
-  const [slots, setSlots] = useState(['🍒', '🍋', '🍊']);
+  const [slots, setSlots] = useState(['', '', '']);
   const [spinning, setSpinning] = useState(false);
   const [hasWon, setHasWon] = useState(false);
-  const [withdrawing, setWithdrawing] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const [showClaimButton, setShowClaimButton] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (hasWon) {
+      confetti();
+      setShowClaimButton(true);
+    }
+  }, [hasWon]);
 
   const spin = () => {
     setSpinning(true);
     setHasWon(false);
-    setShowResult(false);
+    setShowClaimButton(false);
 
-    const spinInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setSlots([
         symbols[Math.floor(Math.random() * symbols.length)],
         symbols[Math.floor(Math.random() * symbols.length)],
@@ -22,101 +36,107 @@ export default function Home() {
     }, 100);
 
     setTimeout(() => {
-      clearInterval(spinInterval);
-      setSlots(['7️⃣', '7️⃣', '7️⃣']);
+      clearInterval(interval);
+      const finalSymbols = ['7️⃣', '7️⃣', '7️⃣'];
+      setSlots(finalSymbols);
       setSpinning(false);
       setHasWon(true);
-      setShowResult(true);
     }, 2000);
   };
 
-  const handleWithdraw = () => {
-  setWithdrawing(true);
-  setTimeout(() => {
-    window.open('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2', '_blank');
-    setWithdrawing(false);
-  }, 1500); // 1.5 сек задержки — экран загрузки
-};
+  const claimPrize = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openLink(
+          'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2'
+        );
+      } else {
+        window.location.href =
+          'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2';
+      }
+    }, 1000);
+  };
 
   return (
     <div
       style={{
-        background: '#7A5FFF',
         height: '100vh',
+        backgroundColor: '#7b5cff',
+        color: 'white',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
         justifyContent: 'center',
-        color: '#fff',
-        fontFamily: 'Arial, sans-serif',
-        textAlign: 'center',
+        alignItems: 'center',
+        fontFamily: 'sans-serif',
         padding: '1rem',
+        textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎰 Испытай удачу</h1>
+      <h1 style={{ fontSize: '2rem' }}>🎰 Испытай удачу</h1>
 
       <div
         style={{
-          display: 'flex',
-          fontSize: '4rem',
-          background: '#fff',
+          fontSize: '3rem',
+          backgroundColor: 'white',
+          color: 'black',
           padding: '1rem 2rem',
-          borderRadius: '10px',
-          marginBottom: '1.5rem',
-          color: '#000',
+          borderRadius: '1rem',
+          margin: '1rem 0',
+          minWidth: '200px',
+          display: 'flex',
+          justifyContent: 'space-around',
         }}
       >
         {slots.map((s, i) => (
-          <span key={i} style={{ margin: '0 0.5rem' }}>
-            {s}
-            {i < slots.length - 1 && <span style={{ margin: '0 0.5rem' }}>|</span>}
-          </span>
+          <span key={i}>{s || '|'}</span>
         ))}
       </div>
 
-      {!hasWon && (
+      <button
+        onClick={spin}
+        disabled={spinning}
+        style={{
+          fontSize: '1.2rem',
+          padding: '0.5rem 1rem',
+          borderRadius: '0.5rem',
+          backgroundColor: 'white',
+          color: '#5c1aff',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        🎯 Крутить
+      </button>
+
+      {hasWon && (
+        <h2 style={{ marginTop: '1rem' }}>
+          🎉 Поздравляем! Вы выиграли <strong>7777₽</strong>
+        </h2>
+      )}
+
+      {showClaimButton && (
         <button
-          onClick={spin}
-          disabled={spinning}
+          onClick={claimPrize}
           style={{
-            fontSize: '1.5rem',
-            padding: '1rem 2rem',
-            background: '#fff',
-            color: '#5e3eff',
+            marginTop: '1rem',
+            padding: '0.75rem 1.5rem',
+            fontSize: '1rem',
+            backgroundColor: 'white',
+            color: '#7b5cff',
             border: 'none',
-            borderRadius: '10px',
+            borderRadius: '0.5rem',
             cursor: 'pointer',
-            marginBottom: '1rem',
           }}
         >
-          {spinning ? 'Крутится...' : '🎯 Крутить'}
+          Забрать выигрыш
         </button>
       )}
 
-      {showResult && (
-        <>
-          <p style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-            🎉 Поздравляем! Вы выиграли <strong>7777₽</strong>
-          </p>
-          {withdrawing ? (
-            <p style={{ fontSize: '1.2rem' }}>⏳ Загружается...</p>
-          ) : (
-            <button
-              onClick={handleWithdraw}
-              style={{
-                fontSize: '1.5rem',
-                padding: '1rem 2rem',
-                background: '#fff',
-                color: '#5e3eff',
-                border: 'none',
-                borderRadius: '10px',
-                cursor: 'pointer',
-              }}
-            >
-              Забрать выигрыш
-            </button>
-          )}
-        </>
+      {isLoading && (
+        <div style={{ marginTop: '2rem', fontSize: '1.1rem' }}>
+          ⏳ Переход к офферу...
+        </div>
       )}
     </div>
   );
