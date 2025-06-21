@@ -23,7 +23,7 @@ export default function Home() {
 
     setTimeout(() => {
       clearInterval(spinInterval);
-      setSlots(['7️⃣', '7️⃣', '7️⃣']);
+      setSlots(['💎', '💎', '💎']);
       setSpinning(false);
       setHasWon(true);
       setShowResult(true);
