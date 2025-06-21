@@ -5,10 +5,8 @@ const symbols = ['🍒', '🔔', '7️⃣', '🍋', '⭐', '💎'];
 const getRandomSymbols = () =>
   Array(3).fill().map(() => symbols[Math.floor(Math.random() * symbols.length)]);
 
-const [slots, setSlots] = useState(getRandomSymbols());
-
 export default function Home() {
-  const [slots, setSlots] = useState(['', '', '']);
+  const [slots, setSlots] = useState(getRandomSymbols());
   const [spinning, setSpinning] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
@@ -26,9 +24,12 @@ export default function Home() {
 
     setTimeout(() => {
       clearInterval(interval);
-      setSlots(['💎', '💎', '💎']);
       setSpinning(false);
-      setHasWon(true);
+
+      // Проверка на выигрыш
+      if (slots[0] === slots[1] && slots[1] === slots[2]) {
+        setHasWon(true);
+      }
     }, 2000);
   };
 
