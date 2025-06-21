@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
+const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
+
 export default function Home() {
-  const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
-  const [slots, setSlots] = useState(['🍒', '🍋', '🍊']);
+  const [slots, setSlots] = useState(['🍒', '🍋', '💎']);
   const [spinning, setSpinning] = useState(false);
   const [hasWon, setHasWon] = useState(false);
-  const [withdrawing, setWithdrawing] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
   const spin = () => {
@@ -13,7 +13,7 @@ export default function Home() {
     setHasWon(false);
     setShowResult(false);
 
-    const spinInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setSlots([
         symbols[Math.floor(Math.random() * symbols.length)],
         symbols[Math.floor(Math.random() * symbols.length)],
@@ -22,7 +22,7 @@ export default function Home() {
     }, 100);
 
     setTimeout(() => {
-      clearInterval(spinInterval);
+      clearInterval(interval);
       setSlots(['💎', '💎', '💎']);
       setSpinning(false);
       setHasWon(true);
@@ -30,24 +30,16 @@ export default function Home() {
     }, 2000);
   };
 
-  const handleWithdraw = () => {
-    setWithdrawing(true);
-    setTimeout(() => {
-      window.open('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2', '_blank');
-      setWithdrawing(false);
-    }, 1500);
-  };
-
   return (
     <div
       style={{
         background: '#7A5FFF',
-        height: '100vh',
+        minHeight: '100vh',
+        color: '#fff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#fff',
         fontFamily: 'Arial, sans-serif',
         textAlign: 'center',
         padding: '1rem',
@@ -74,10 +66,9 @@ export default function Home() {
         ))}
       </div>
 
-      {!hasWon && (
+      {!spinning && !hasWon && (
         <button
           onClick={spin}
-          disabled={spinning}
           style={{
             fontSize: '1.5rem',
             padding: '1rem 2rem',
@@ -89,33 +80,42 @@ export default function Home() {
             marginBottom: '1rem',
           }}
         >
-          {spinning ? 'Крутится...' : '🎯 Крутить'}
+          🎯 Крутить
         </button>
       )}
 
-      {showResult && (
+      {spinning && <p style={{ fontSize: '1.2rem' }}>Крутится...</p>}
+
+      {showResult && hasWon && (
         <>
           <p style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
             🎉 Поздравляем! Вы выиграли <strong>7777₽</strong>
           </p>
-          {withdrawing ? (
-            <p style={{ fontSize: '1.2rem' }}>⏳ Загружается...</p>
-          ) : (
-            <button
-              onClick={handleWithdraw}
-              style={{
-                fontSize: '1.5rem',
-                padding: '1rem 2rem',
-                background: '#fff',
-                color: '#5e3eff',
-                border: 'none',
-                borderRadius: '10px',
-                cursor: 'pointer',
-              }}
-            >
-              Забрать выигрыш
-            </button>
-          )}
+          <button
+            onClick={() => {
+              if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openLink(
+                  'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2'
+                );
+              } else {
+                window.open(
+                  'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2',
+                  '_blank'
+                );
+              }
+            }}
+            style={{
+              fontSize: '1.5rem',
+              padding: '1rem 2rem',
+              background: '#fff',
+              color: '#5e3eff',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer',
+            }}
+          >
+            Забрать выигрыш
+          </button>
         </>
       )}
     </div>
