@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
-const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
+const symbols = ['🍒', '🔔', '7️⃣', '🍋', '⭐', '💎'];
+
+const getRandomSymbols = () =>
+  Array(3).fill().map(() => symbols[Math.floor(Math.random() * symbols.length)]);
+
+const [slots, setSlots] = useState(getRandomSymbols());
 
 export default function Home() {
   const [slots, setSlots] = useState(['', '', '']);
