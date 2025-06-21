@@ -1,33 +1,25 @@
-import { useEffect, useState } from 'react';
-import confetti from 'canvas-confetti';
-
-const symbols = ['🍒', '🔔', '7️⃣', '🍋', '⭐', '💎'];
-
-const getRandomSymbols = () =>
-  Array(3)
-    .fill()
-    .map(() => symbols[Math.floor(Math.random() * symbols.length)]);
+import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [slots, setSlots] = useState(['', '', '']);
+  const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
+  const [slots, setSlots] = useState(['🍒', '🍋', '🍊']);
   const [spinning, setSpinning] = useState(false);
   const [hasWon, setHasWon] = useState(false);
-  const [showClaimButton, setShowClaimButton] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
-    if (hasWon) {
-      confetti();
-      setShowClaimButton(true);
+    if (typeof window !== 'undefined' && window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.expand();
     }
-  }, [hasWon]);
+  }, []);
 
   const spin = () => {
     setSpinning(true);
     setHasWon(false);
-    setShowClaimButton(false);
+    setShowResult(false);
 
-    const interval = setInterval(() => {
+    const spinInterval = setInterval(() => {
       setSlots([
         symbols[Math.floor(Math.random() * symbols.length)],
         symbols[Math.floor(Math.random() * symbols.length)],
@@ -36,107 +28,105 @@ export default function Home() {
     }, 100);
 
     setTimeout(() => {
-      clearInterval(interval);
-      const finalSymbols = ['7️⃣', '7️⃣', '7️⃣'];
-      setSlots(finalSymbols);
+      clearInterval(spinInterval);
+      setSlots(['💎', '💎', '💎']);
       setSpinning(false);
       setHasWon(true);
+      setShowResult(true);
     }, 2000);
   };
 
-  const claimPrize = () => {
-    setIsLoading(true);
+  const handleWithdraw = () => {
+    setWithdrawing(true);
     setTimeout(() => {
       if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.openLink(
-          'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2'
-        );
+        window.Telegram.WebApp.openLink('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2');
       } else {
-        window.location.href =
-          'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2';
+        window.open('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2', '_blank');
       }
-    }, 1000);
+      setWithdrawing(false);
+    }, 1500);
   };
 
   return (
     <div
       style={{
+        background: '#7A5FFF',
         height: '100vh',
-        backgroundColor: '#7b5cff',
-        color: 'white',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        fontFamily: 'sans-serif',
-        padding: '1rem',
+        justifyContent: 'center',
+        color: '#fff',
+        fontFamily: 'Arial, sans-serif',
         textAlign: 'center',
+        padding: '1rem',
       }}
     >
-      <h1 style={{ fontSize: '2rem' }}>🎰 Испытай удачу</h1>
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎰 Испытай удачу</h1>
 
       <div
         style={{
-          fontSize: '3rem',
-          backgroundColor: 'white',
-          color: 'black',
-          padding: '1rem 2rem',
-          borderRadius: '1rem',
-          margin: '1rem 0',
-          minWidth: '200px',
           display: 'flex',
-          justifyContent: 'space-around',
+          fontSize: '4rem',
+          background: '#fff',
+          padding: '1rem 2rem',
+          borderRadius: '10px',
+          marginBottom: '1.5rem',
+          color: '#000',
         }}
       >
         {slots.map((s, i) => (
-          <span key={i}>{s || '|'}</span>
+          <span key={i} style={{ margin: '0 0.5rem' }}>
+            {s}
+            {i < slots.length - 1 && <span style={{ margin: '0 0.5rem' }}>|</span>}
+          </span>
         ))}
       </div>
 
-      <button
-        onClick={spin}
-        disabled={spinning}
-        style={{
-          fontSize: '1.2rem',
-          padding: '0.5rem 1rem',
-          borderRadius: '0.5rem',
-          backgroundColor: 'white',
-          color: '#5c1aff',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        🎯 Крутить
-      </button>
-
-      {hasWon && (
-        <h2 style={{ marginTop: '1rem' }}>
-          🎉 Поздравляем! Вы выиграли <strong>7777₽</strong>
-        </h2>
-      )}
-
-      {showClaimButton && (
+      {!hasWon && (
         <button
-          onClick={claimPrize}
+          onClick={spin}
+          disabled={spinning}
           style={{
-            marginTop: '1rem',
-            padding: '0.75rem 1.5rem',
-            fontSize: '1rem',
-            backgroundColor: 'white',
-            color: '#7b5cff',
+            fontSize: '1.5rem',
+            padding: '1rem 2rem',
+            background: '#fff',
+            color: '#5e3eff',
             border: 'none',
-            borderRadius: '0.5rem',
+            borderRadius: '10px',
             cursor: 'pointer',
+            marginBottom: '1rem',
           }}
         >
-          Забрать выигрыш
+          {spinning ? 'Крутится...' : '🎯 Крутить'}
         </button>
       )}
 
-      {isLoading && (
-        <div style={{ marginTop: '2rem', fontSize: '1.1rem' }}>
-          ⏳ Переход к офферу...
-        </div>
+      {showResult && (
+        <>
+          <p style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+            🎉 Поздравляем! Вы выиграли <strong>7777₽</strong>
+          </p>
+          {withdrawing ? (
+            <p style={{ fontSize: '1.2rem' }}>⏳ Загружается...</p>
+          ) : (
+            <button
+              onClick={handleWithdraw}
+              style={{
+                fontSize: '1.5rem',
+                padding: '1rem 2rem',
+                background: '#fff',
+                color: '#5e3eff',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer',
+              }}
+            >
+              Забрать выигрыш
+            </button>
+          )}
+        </>
       )}
     </div>
   );
