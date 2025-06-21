@@ -26,7 +26,7 @@ export default function Home() {
 
     setTimeout(() => {
       clearInterval(interval);
-      setSlots(['7️⃣', '7️⃣', '7️⃣']);
+      setSlots(['💎', '💎', '💎']);
       setSpinning(false);
       setHasWon(true);
     }, 2000);
