@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '🔔', '💎'];
@@ -7,12 +7,6 @@ export default function Home() {
   const [hasWon, setHasWon] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
   const [showResult, setShowResult] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.expand();
-    }
-  }, []);
 
   const spin = () => {
     setSpinning(true);
@@ -29,7 +23,7 @@ export default function Home() {
 
     setTimeout(() => {
       clearInterval(spinInterval);
-      setSlots(['💎', '💎', '💎']);
+      setSlots(['7️⃣', '7️⃣', '7️⃣']);
       setSpinning(false);
       setHasWon(true);
       setShowResult(true);
@@ -39,10 +33,15 @@ export default function Home() {
   const handleWithdraw = () => {
     setWithdrawing(true);
     setTimeout(() => {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.openLink('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2');
+      if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.openLink(
+          'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2'
+        );
       } else {
-        window.open('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2', '_blank');
+        window.open(
+          'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2',
+          '_blank'
+        );
       }
       setWithdrawing(false);
     }, 1500);
