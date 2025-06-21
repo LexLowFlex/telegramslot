@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 
 const symbols = ['🍒', '🔔', '7️⃣', '🍋', '⭐', '💎'];
-
 const getRandomSymbols = () =>
   Array(3)
     .fill()
     .map(() => symbols[Math.floor(Math.random() * symbols.length)]);
 
 export default function Home() {
-  const [slots, setSlots] = useState(['', '', '']);
+  const [slots, setSlots] = useState(getRandomSymbols());
   const [spinning, setSpinning] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
@@ -22,11 +21,15 @@ export default function Home() {
 
     setTimeout(() => {
       clearInterval(interval);
-      const finalSymbols = ['💎', '💎', '💎'];
-      setSlots(finalSymbols);
+      const final = ['💎', '💎', '💎'];
+      setSlots(final);
       setSpinning(false);
       setHasWon(true);
     }, 2000);
+  };
+
+  const handleWinClaim = () => {
+    window.location.href = 'https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2';
   };
 
   return (
@@ -40,7 +43,8 @@ export default function Home() {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: 'sans-serif',
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: '20px',
       }}
     >
       <h1 style={{ fontSize: '2rem', marginBottom: '20px' }}>🎰 Испытай удачу</h1>
@@ -48,18 +52,24 @@ export default function Home() {
       <div
         style={{
           display: 'flex',
-          gap: '20px',
           fontSize: '4rem',
           background: 'white',
           color: '#000',
           padding: '10px 30px',
           borderRadius: '10px',
           minWidth: '200px',
-          justifyContent: 'center'
         }}
       >
         {slots.map((s, i) => (
-          <div key={i} style={{ borderLeft: i !== 0 ? '2px solid #ccc' : 'none', padding: '0 10px' }}>
+          <div
+            key={i}
+            style={{
+              borderLeft: i !== 0 ? '2px solid #ccc' : 'none',
+              padding: '0 10px',
+              flex: 1,
+              textAlign: 'center',
+            }}
+          >
             {s}
           </div>
         ))}
@@ -77,7 +87,7 @@ export default function Home() {
             background: 'white',
             color: '#7D5FFF',
             border: 'none',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
           🎯 Крутить
@@ -95,9 +105,9 @@ export default function Home() {
               background: '#fff',
               color: '#7D5FFF',
               border: 'none',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
-            onClick={() => window.Telegram?.WebApp?.close?.()}
+            onClick={handleWinClaim}
           >
             Забрать выигрыш
           </button>
