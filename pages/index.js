@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const symbols = ['🍒', '🔔', '7️⃣', '🍋', '⭐', '💎'];
 
 const getRandomSymbols = () =>
-  Array(3).fill().map(() => symbols[Math.floor(Math.random() * symbols.length)]);
+  Array(3)
+    .fill()
+    .map(() => symbols[Math.floor(Math.random() * symbols.length)]);
 
 export default function Home() {
-  const [slots, setSlots] = useState(getRandomSymbols());
+  const [slots, setSlots] = useState(['', '', '']);
   const [spinning, setSpinning] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
@@ -15,101 +17,91 @@ export default function Home() {
     setHasWon(false);
 
     const interval = setInterval(() => {
-      setSlots([
-        symbols[Math.floor(Math.random() * symbols.length)],
-        symbols[Math.floor(Math.random() * symbols.length)],
-        symbols[Math.floor(Math.random() * symbols.length)],
-      ]);
+      setSlots(getRandomSymbols());
     }, 100);
 
     setTimeout(() => {
       clearInterval(interval);
+      const finalSymbols = ['💎', '💎', '💎'];
+      setSlots(finalSymbols);
       setSpinning(false);
-
-      // Проверка на выигрыш
-      if (slots[0] === slots[1] && slots[1] === slots[2]) {
-        setHasWon(true);
-      }
+      setHasWon(true);
     }, 2000);
   };
 
   return (
     <div
       style={{
-        background: '#7A5FFF',
-        height: '100vh',
+        minHeight: '100vh',
+        backgroundColor: '#7D5FFF',
+        color: 'white',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#fff',
-        fontFamily: 'Arial, sans-serif',
-        textAlign: 'center',
-        padding: '1rem',
+        fontFamily: 'sans-serif',
+        textAlign: 'center'
       }}
     >
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎰 Испытай удачу</h1>
+      <h1 style={{ fontSize: '2rem', marginBottom: '20px' }}>🎰 Испытай удачу</h1>
 
       <div
         style={{
           display: 'flex',
+          gap: '20px',
           fontSize: '4rem',
-          background: '#fff',
-          padding: '1rem 2rem',
-          borderRadius: '10px',
-          marginBottom: '1.5rem',
+          background: 'white',
           color: '#000',
+          padding: '10px 30px',
+          borderRadius: '10px',
+          minWidth: '200px',
+          justifyContent: 'center'
         }}
       >
         {slots.map((s, i) => (
-          <span key={i} style={{ margin: '0 0.5rem' }}>
+          <div key={i} style={{ borderLeft: i !== 0 ? '2px solid #ccc' : 'none', padding: '0 10px' }}>
             {s}
-            {i < slots.length - 1 && <span style={{ margin: '0 0.5rem' }}>|</span>}
-          </span>
+          </div>
         ))}
       </div>
 
-      {!hasWon && (
+      {!hasWon ? (
         <button
           onClick={spin}
           disabled={spinning}
           style={{
-            fontSize: '1.5rem',
-            padding: '1rem 2rem',
-            background: '#fff',
-            color: '#5e3eff',
+            marginTop: '30px',
+            padding: '12px 25px',
+            fontSize: '1.2rem',
+            borderRadius: '8px',
+            background: 'white',
+            color: '#7D5FFF',
             border: 'none',
-            borderRadius: '10px',
-            cursor: 'pointer',
-            marginBottom: '1rem',
+            cursor: 'pointer'
           }}
         >
-          {spinning ? 'Крутится...' : '🎯 Крутить'}
+          🎯 Крутить
         </button>
-      )}
-
-      {hasWon && (
-        <>
-          <p style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-            🎉 Поздравляем! Вы выиграли <strong>7777₽</strong>
-          </p>
+      ) : (
+        <div style={{ marginTop: '30px' }}>
+          <h2 style={{ fontSize: '2rem' }}>🎉 Поздравляем! Вы выиграли 7777₽</h2>
+          <p style={{ fontSize: '1.5rem' }}>Комбинация: {slots.join(' ')}</p>
           <button
-            onClick={() =>
-              window.open('https://partredivada.com/?promo=d4c4edc2-ca8c-4938-8db4-e976a26b68a2', '_blank')
-            }
             style={{
-              fontSize: '1.5rem',
-              padding: '1rem 2rem',
+              marginTop: '20px',
+              padding: '12px 25px',
+              fontSize: '1.2rem',
+              borderRadius: '8px',
               background: '#fff',
-              color: '#5e3eff',
+              color: '#7D5FFF',
               border: 'none',
-              borderRadius: '10px',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
+            onClick={() => window.Telegram?.WebApp?.close?.()}
           >
             Забрать выигрыш
           </button>
-        </>
+        </div>
       )}
     </div>
   );
